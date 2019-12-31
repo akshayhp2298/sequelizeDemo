@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`user route test should return user 1`] = `
+Object {
+  "message": "user data",
+  "user": Object {
+    "email": "sample@123.com",
+    "firstName": "test",
+    "id": 3,
+    "lastName": "test",
+  },
+}
+`;
+
+exports[`user route test should update user 1`] = `
+Object {
+  "message": "user updated",
+}
+`;
+
+exports[`user route test should update user 2`] = `
+Object {
+  "message": "user updated",
+}
+`;

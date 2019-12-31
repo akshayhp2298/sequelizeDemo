@@ -1,5 +1,5 @@
 import { createUser, getUserByEmail, updateUser } from "../../DB/query/user"
-import {getToken} from '../Auth/index'
+import { getToken } from "../Auth/index"
 import db from "../../DB"
 import md5 from "md5"
 exports.addUser = async ctx => {
@@ -14,9 +14,9 @@ exports.addUser = async ctx => {
 }
 
 exports.getSelf = async ctx => {
-  const { email } = ctx.request.body
+  const { email } = ctx.state.user
   let user = await getUserByEmail(db, email)
-  delete user.dataValues["password"]
+  delete user["password"]
   ctx.body = { message: "user data", user }
 }
 
@@ -35,10 +35,11 @@ exports.updateUser = async ctx => {
 exports.loginUser = async ctx => {
   let { email, password } = ctx.request.body
   const user = await getUserByEmail(db, email)
-  ctx.assert(user, 404, "user not found")
+  user === undefined && ctx.throw(404, "user not found")
   password = md5(password)
-  ctx.assert(password === user.password, 401, "password not valid")
-  delete user.dataValues.password
-  const token = await getToken(user.dataValues)
-  ctx.body = { message: "user logedin",token }
+  password !== user.password &&
+    ctx.throw(401, { message: "password not valid" })
+  delete user.password
+  const token = await getToken(user)
+  ctx.body = { message: "user logedin", token }
 }

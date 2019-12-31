@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "NODE_PATH=/ node --max-old-space-size=6144 script/test.js",
     "start": "nodemon --exec babel-node index.js"
   },
   "keywords": [],
@@ -24,6 +24,9 @@
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/node": "^7.7.7",
-    "@babel/preset-env": "^7.7.7"
+    "@babel/preset-env": "^7.7.7",
+    "jest": "^24.9.0",
+    "supertest": "^4.0.2",
+    "babel-plugin-transform-runtime": "^6.23.0"
   }
 }

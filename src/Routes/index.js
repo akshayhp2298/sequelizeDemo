@@ -9,7 +9,7 @@ const routes = [userRoute,postRoute]
 routes.forEach(route => router.use(route(Router).routes()))
 
 router.get("/", ctx => {
-  ctx.body = "done"
+  ctx.body = { done: true }
 })
 
 export default router
