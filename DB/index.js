@@ -1,52 +1,34 @@
-import Sequelize from "sequelize"
-let sequelize = new Sequelize("4ReV3WPZQD", "4ReV3WPZQD", "57m6yB3b1t", {
-  host: "remotemysql.com",
-  dialect: "mysql"
-})
-sequelize
-  .authenticate()
-  .then(function(err) {
-    console.log("Connection has been established successfully.")
-  })
-  .catch(function(err) {
-    console.log("Unable to connect to the database:", err)
-  })
-export default sequelize
+import fs from "fs"
+import path from"path"
+import Sequelize from"sequelize"
+const env = process.env.NODE_ENV || "development"
+const config = require(__dirname + "/./config/config.json")[env]
+import setAssociation from "../DB/associations"
+let sequelize
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config)
+} else {
+  sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config
+  )
+}
+const modelsPath = path.resolve(__dirname, "models")
+export const importModels = () => {
+  const models = {}
+  fs.readdirSync(modelsPath)
+    .filter(file => file.indexOf(".") !== 0 && file !== "index.js")
+    .forEach(file => {
+      const model = sequelize.import(path.join(modelsPath, file))
+      models[model.name] = model
+    })
+  return models
+}
+const db = importModels()
+setAssociation(db)
+db.sequelize = sequelize
+db.Sequelize = Sequelize
 
-// const Model = Sequelize.Model
-// class User extends Model {}
-// User.init(
-//   {
-//     firstName: {
-//       type: Sequelize.STRING,
-//       allowNull: false
-//     },
-//     lastName: {
-//       type: Sequelize.STRING
-//     }
-//   },
-//   {
-//     sequelize,
-//     modelName: "user"
-//   }
-// )
-// User.sync().then(() => {
-//   // Now the `users` table in the database corresponds to the model definition
-//   // return User.create({
-//   //   firstName: 'John',
-//   //   lastName: 'Hancock'
-//   // });
-// })
-// const add = async (firstName,lastName) =>
-//   await User.create({ firstName, lastName }).then(data =>
-//     console.log(data)
-//   )
-// const get =  async () =>
-//     await User.findAll({ raw: true })
-// // add()
-// async function show() {
-//     await add("a","b")
-//     const data = await get()
-//     console.log(data)
-// }
-// show()
+module.exports = db

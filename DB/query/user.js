@@ -1,7 +1,8 @@
-import User from "../models/user.db"
+exports.getAllUser = db => db.users.findAll({ raw: true })
 
-exports.getAllUser = () => User.findAll({ raw: true })
+exports.createUser = (db, user) => db.users.create(user)
 
-exports.createUser = user => User.create(user)
+exports.getUserByEmail = (db, email) => db.users.findOne({ email })
 
-exports.getUserByEmail = email => User.findAll({ email })
+exports.updateUser = (db, user) =>
+  db.users.update(user, { where: { email: user.email } })
